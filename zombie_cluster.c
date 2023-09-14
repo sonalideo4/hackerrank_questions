@@ -6,16 +6,22 @@ void DFS(j, bool *visited, int *zombies, numZombies)
         if(zombies[j][k] == 1 && visited[j][k] == false && visited[k][j] == false) {
             visited[j][k] = true;
             visited[k][j] = true;
-            DFS(k, &visited, &zombies, numZombies);
+            DFS(k, visited, zombies, numZombies);
         }
     }
 }
 
 int zombieCluster(int numZombies, char **zombies) 
 {
-    bool visited [numZombies][numZombies];
+    bool *visited[numZombies]; // visited [numZombies][numZombies]
+    for(int i=0; i<numZombies; i++)
+        visited[i] = (bool*) calloc(numZombies, sizeof(bool));
+
+    int *zombieMatrix[numZombies]; // zombieMatrix [numZombies][numZombies]
+    for(int i=0; i<numZombies; i++)
+        zombieMatrix[i] = (int*) calloc(numZombies, sizeof(int));
+
     int clusters = 0;
-    int zombieMatrix [numZombies][numZombies];
     char currentZombie[numZombies];
     bool rowChecked = false;
     
@@ -35,8 +41,8 @@ int zombieCluster(int numZombies, char **zombies)
             if(zombieMatrix[i][j] == 1 && visited[i][j] == false && visited[j][i] == false) {
                 visited[i][j] = true;
                 visited[j][i] = true;
-                DFS(j, &visited, &zombieMatrix, numZombies);
-                if(!onceChecked) {
+                DFS(j, visited, zombieMatrix, numZombies);
+                if(!rowChecked) {
                     clusters += 1;
                     rowChecked = true;
                 }
@@ -49,7 +55,6 @@ int zombieCluster(int numZombies, char **zombies)
 int main()
 {
     const char *zombies[5] = ["10101", "11101", "01100", "00010", "10011"];
-    int cluster = zombieCluster(5, &zombies);
-    printf("Zombie clusters=%d", cluster);
+    printf("Zombie clusters=%d", zombieCluster(5, &zombies));
     return 0;
 }
